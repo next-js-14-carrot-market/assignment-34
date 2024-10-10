@@ -9,12 +9,6 @@ import { getSession } from "@/utils/session";
 import Responses from "@/components/responses";
 import LikeButton from "@/components/like-button";
 
-function getCachedTweetDetail(tweetId: number) {
-  const cachedTweetDetail = unstable_cache(getTweetDetail, ["tweet-detail"], {
-    tags: [`like-detail-${tweetId}`],
-  });
-  return cachedTweetDetail(tweetId);
-}
 async function getCachedLikeStatus(tweetId: number) {
   const session = await getSession();
   const cachedLikeStatus = unstable_cache(getLikeStatus, ["tweet-like-status"], {
@@ -33,7 +27,7 @@ export default async function TweetDetail({ params }: { params: { id: string } }
   const id = Number(params.id);
   if (isNaN(id)) return notFound();
 
-  const tweet = await getCachedTweetDetail(id);
+  const tweet = await getTweetDetail(id);
   const responses = await getCachedResponses(id);
   if (!tweet) return notFound();
   const { isLiked, likeCount } = await getCachedLikeStatus(id);
